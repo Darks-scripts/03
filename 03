@@ -1,5 +1,32 @@
-getgenv().AuthKey = "HUGE_3C4qcDEzpSth"
-getgenv().LoadSettings = {
-    Example_Setting = Example_Value
+ task.wait(1)
+until game:IsLoaded()
+
+-- Define a function to load and execute a script with a delay
+local function loadAndExecuteScript(url, delay)
+    local script = game:HttpGet(url) -- Load the script
+    local success, result = pcall(function()
+        loadstring(script)() -- Execute the script
+    end)
+    
+    if not success then
+        warn("Error executing script:", result)
+    end
+
+    wait(delay) -- Wait for the specified delay
+end
+
+-- Define a list of scripts to load and execute sequentially with delays
+local scripts = {
+    "https://raw.githubusercontent.com/Darks-scripts/04/refs/heads/main/04",
+    "https://raw.githubusercontent.com/Darks-scripts/fps-booster/main/dark%20fps%20booster",
+    "https://raw.githubusercontent.com/Darks-scripts/05/refs/heads/main/05"
 }
-loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/6a4a1944b1f257b9e52e2fe387345ab2.lua"))()
+
+-- Execute scripts sequentially with delays
+for i, scriptUrl in ipairs(scripts) do
+    spawn(function()
+        loadAndExecuteScript(scriptUrl, 2) -- Load and execute each script with a delay of 2 seconds
+    end)
+end
+
+loadAndExecuteScript("https://pastebin.com/raw/8YZ2cc6V", 0) -- Load and execute the pastebin script immediately
