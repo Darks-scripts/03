@@ -1,32 +1,36 @@
- task.wait(1)
-until game:IsLoaded()
-
--- Define a function to load and execute a script with a delay
-local function loadAndExecuteScript(url, delay)
-    local script = game:HttpGet(url) -- Load the script
-    local success, result = pcall(function()
-        loadstring(script)() -- Execute the script
-    end)
-    
-    if not success then
-        warn("Error executing script:", result)
-    end
-
-    wait(delay) -- Wait for the specified delay
-end
-
--- Define a list of scripts to load and execute sequentially with delays
-local scripts = {
-    "https://raw.githubusercontent.com/Darks-scripts/04/refs/heads/main/04",
-    "https://raw.githubusercontent.com/Darks-scripts/fps-booster/main/dark%20fps%20booster",
-    "https://raw.githubusercontent.com/Darks-scripts/05/refs/heads/main/05"
+getgenv().AuthKey = "HUGE_3C4qcDEzpSth"
+getgenv().LoadSettings = {
+    Example_Setting = Example_Value
 }
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/6a4a1944b1f257b9e52e2fe387345ab2.lua"))()
 
--- Execute scripts sequentially with delays
-for i, scriptUrl in ipairs(scripts) do
-    spawn(function()
-        loadAndExecuteScript(scriptUrl, 2) -- Load and execute each script with a delay of 2 seconds
-    end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Darks-scripts/fps-booster/main/dark%20fps%20booster"))()
+
+-- Ensure the player's character is fully loaded
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Wait for HumanoidRootPart to load
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Set the fixed teleport position
+local fixedCFrame = CFrame.new(9338.26758, 211.59906, -11349.6826, 0.15992187, 7.05755596e-08, -0.987129688, 2.83905188e-09, 1, 7.19556823e-08, 0.987129688, -1.43097996e-08, 0.15992187)
+
+-- Teleport function
+local function teleportPlayer()
+    if rootPart then
+        rootPart.CFrame = fixedCFrame
+    end
 end
 
-loadAndExecuteScript("https://pastebin.com/raw/8YZ2cc6V", 0) -- Load and execute the pastebin script immediately
+-- Initial teleport after 5 seconds
+wait(1)
+teleportPlayer()
+
+-- Lock the player in place
+local runService = game:GetService("RunService")
+runService.Heartbeat:Connect(function()
+    if rootPart and (rootPart.Position - fixedCFrame.Position).Magnitude > 1 then
+        teleportPlayer() -- Bring player back if moved
+    end
+end)
